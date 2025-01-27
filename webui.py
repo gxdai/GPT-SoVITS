@@ -215,6 +215,8 @@ def change_uvr5():
     global p_uvr5
     if(p_uvr5==None):
         cmd = '"%s" tools/uvr5/webui.py "%s" %s %s %s'%(python_exec,infer_device,is_half,webui_port_uvr5,is_share)
+        print("#" * 100)
+        print("cmd: ", cmd)
         yield i18n("UVR5已开启"), {'__type__':'update','visible':False}, {'__type__':'update','visible':True}
         print(cmd)
         p_uvr5 = Popen(cmd, shell=True)
@@ -263,6 +265,8 @@ def open_asr(asr_inp_dir, asr_opt_dir, asr_model, asr_model_size, asr_lang, asr_
         output_folder = asr_opt_dir or "output/asr_opt"
         output_file_path = os.path.abspath(f'{output_folder}/{output_file_name}.list')
         yield "ASR任务开启：%s"%cmd, {"__type__":"update","visible":False}, {"__type__":"update","visible":True}, {"__type__":"update"}, {"__type__":"update"}, {"__type__":"update"}
+        
+        print("ASR: cmd.....")
         print(cmd)
         p_asr = Popen(cmd, shell=True)
         p_asr.wait()
@@ -285,7 +289,8 @@ def open_denoise(denoise_inp_dir, denoise_opt_dir):
         denoise_opt_dir=my_utils.clean_path(denoise_opt_dir)
         check_for_existance([denoise_inp_dir])
         cmd = '"%s" tools/cmd-denoise.py -i "%s" -o "%s" -p %s'%(python_exec,denoise_inp_dir,denoise_opt_dir,"float16"if is_half==True else "float32")
-
+        print("#### Denoise: ")
+        print(cmd)
         yield "语音降噪任务开启：%s"%cmd, {"__type__":"update","visible":False}, {"__type__":"update","visible":True}, {"__type__":"update"}, {"__type__":"update"}
         print(cmd)
         p_denoise = Popen(cmd, shell=True)
@@ -305,6 +310,7 @@ def close_denoise():
 
 p_train_SoVITS=None
 def open1Ba(batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers1Ba,pretrained_s2G,pretrained_s2D):
+    print(batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers1Ba,pretrained_s2G,pretrained_s2D)
     global p_train_SoVITS
     if(p_train_SoVITS==None):
         with open("GPT_SoVITS/configs/s2.json")as f:
@@ -353,6 +359,7 @@ def close1Ba():
 
 p_train_GPT=None
 def open1Bb(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers,pretrained_s1):
+    print(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers,pretrained_s1)
     global p_train_GPT
     if(p_train_GPT==None):
         with open("GPT_SoVITS/configs/s1longer.yaml"if version=="v1"else "GPT_SoVITS/configs/s1longer-v2.yaml")as f:
@@ -403,6 +410,8 @@ def close1Bb():
 
 ps_slice=[]
 def open_slice(inp,opt_root,threshold,min_length,min_interval,hop_size,max_sil_kept,_max,alpha,n_parts):
+    print("Slice start.......")
+    print(inp,opt_root,threshold,min_length,min_interval,hop_size,max_sil_kept,_max,alpha,n_parts)
     global ps_slice
     inp = my_utils.clean_path(inp)
     opt_root = my_utils.clean_path(opt_root)
@@ -614,6 +623,8 @@ def close1c():
 #####inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numbers1c,bert_pretrained_dir,cnhubert_base_dir,pretrained_s2G
 ps1abc=[]
 def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numbers1c,bert_pretrained_dir,ssl_pretrained_dir,pretrained_s2G_path):
+    # output/asr_opt/denoise_opt.list output/slicer_opt xxx 0-1-0-1 0-1-0-1 0-1-0-1 GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large GPT_SoVITS/pretrained_models/chinese-hubert-base GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth
+    print(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numbers1c,bert_pretrained_dir,ssl_pretrained_dir,pretrained_s2G_path)
     global ps1abc
     inp_text = my_utils.clean_path(inp_text)
     inp_wav_dir = my_utils.clean_path(inp_wav_dir)
@@ -624,6 +635,7 @@ def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numb
         try:
             #############################1a
             path_text="%s/2-name2text.txt" % opt_dir
+            print("path_text: ", path_text)
             if(os.path.exists(path_text)==False or (os.path.exists(path_text)==True and len(open(path_text,"r",encoding="utf8").read().strip("\n").split("\n"))<2)):
                 config={
                     "inp_text":inp_text,
@@ -645,6 +657,7 @@ def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numb
                     )
                     os.environ.update(config)
                     cmd = '"%s" GPT_SoVITS/prepare_datasets/1-get-text.py'%python_exec
+                    print("####: 1a")
                     print(cmd)
                     p = Popen(cmd, shell=True)
                     ps1abc.append(p)
@@ -682,6 +695,7 @@ def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numb
                 )
                 os.environ.update(config)
                 cmd = '"%s" GPT_SoVITS/prepare_datasets/2-get-hubert-wav32k.py'%python_exec
+                print("####: 1b")
                 print(cmd)
                 p = Popen(cmd, shell=True)
                 ps1abc.append(p)
@@ -711,6 +725,7 @@ def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numb
                     )
                     os.environ.update(config)
                     cmd = '"%s" GPT_SoVITS/prepare_datasets/3-get-semantic.py'%python_exec
+                    print("####: 1c")
                     print(cmd)
                     p = Popen(cmd, shell=True)
                     ps1abc.append(p)
