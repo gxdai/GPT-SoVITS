@@ -1,5 +1,8 @@
 import os
 import traceback,gradio as gr
+import sys
+
+sys.path.append(os.getcwd())
 import logging
 from tools.i18n.i18n import I18nAuto
 from tools.my_utils import clean_path
@@ -9,7 +12,7 @@ logger = logging.getLogger(__name__)
 import librosa,ffmpeg
 import soundfile as sf
 import torch
-import sys
+
 from mdxnet import MDXNetDereverb
 from vr import AudioPre, AudioPreDeEcho
 from bsroformer import BsRoformer_Loader
@@ -18,6 +21,7 @@ try:
     import gradio.analytics as analytics
     analytics.version_check = lambda:None
 except:...
+
 
 weight_uvr5_root = "tools/uvr5/uvr5_weights"
 uvr5_names = []
