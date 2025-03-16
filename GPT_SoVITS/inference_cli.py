@@ -4,7 +4,7 @@ import soundfile as sf
 
 from tools.i18n.i18n import I18nAuto
 from GPT_SoVITS.inference_webui import change_gpt_weights, change_sovits_weights, get_tts_wav
-
+print("STEP 0000")
 i18n = I18nAuto()
 
 def synthesize(GPT_model_path, SoVITS_model_path, ref_audio_path, ref_text_path, ref_language, target_text_path, target_language, output_path):

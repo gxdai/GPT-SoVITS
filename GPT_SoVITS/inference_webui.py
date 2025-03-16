@@ -232,7 +232,7 @@ def change_sovits_weights(sovits_path,prompt_language=None,text_language=None):
 
 
 
-change_sovits_weights(sovits_path)
+# change_sovits_weights(sovits_path)
 
 
 def change_gpt_weights(gpt_path):
@@ -256,7 +256,7 @@ def change_gpt_weights(gpt_path):
     with open("./weight.json","w")as f:f.write(json.dumps(data))
 
 
-change_gpt_weights(gpt_path)
+# change_gpt_weights(gpt_path)
 
 
 def get_spepc(hps, filename):
