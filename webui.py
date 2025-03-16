@@ -412,8 +412,6 @@ def close1Bb():
 
 ps_slice=[]
 def open_slice(inp,opt_root,threshold,min_length,min_interval,hop_size,max_sil_kept,_max,alpha,n_parts):
-    print("Slice start.......")
-    print(inp,opt_root,threshold,min_length,min_interval,hop_size,max_sil_kept,_max,alpha,n_parts)
     global ps_slice
     inp = my_utils.clean_path(inp)
     opt_root = my_utils.clean_path(opt_root)
@@ -480,7 +478,6 @@ def open1a(inp_text,inp_wav_dir,exp_name,gpu_numbers,bert_pretrained_dir):
             )
             os.environ.update(config)
             cmd = '"%s" GPT_SoVITS/prepare_datasets/1-get-text.py'%python_exec
-            print(cmd)
             p = Popen(cmd, shell=True)
             ps1a.append(p)
         yield "文本进程执行中", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
@@ -727,8 +724,6 @@ def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numb
                     )
                     os.environ.update(config)
                     cmd = '"%s" GPT_SoVITS/prepare_datasets/3-get-semantic.py'%python_exec
-                    print("####: 1c")
-                    print(cmd)
                     p = Popen(cmd, shell=True)
                     ps1abc.append(p)
                 yield "进度：1a1b-done, 1cing", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
