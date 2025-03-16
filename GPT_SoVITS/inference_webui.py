@@ -187,6 +187,7 @@ else:
 
 def change_sovits_weights(sovits_path,prompt_language=None,text_language=None):
     global vq_model, hps, version, dict_language
+    print("sovits_path: ", sovits_path)
     dict_s2 = torch.load(sovits_path, map_location="cpu")
     hps = dict_s2["config"]
     hps = DictToAttrRecursive(hps)
@@ -236,6 +237,7 @@ def change_sovits_weights(sovits_path,prompt_language=None,text_language=None):
 
 
 def change_gpt_weights(gpt_path):
+    print("gpt_model: ", gpt_path)
     global hz, max_sec, t2s_model, config
     hz = 50
     dict_s1 = torch.load(gpt_path, map_location="cpu")
