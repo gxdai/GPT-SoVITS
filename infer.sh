@@ -11,4 +11,4 @@ python GPT_SoVITS/inference_cli.py --gpt_model $1 --sovits_model $2 --ref_audio 
     --ref_text ""
 
 
-## Example cmd: GPT_SoVITS/inference_cli.py --gpt_model ./GPT_weights_v2/xxx-e15.ckpt --sovits_model ./SoVITS_weights_v2/xxx_e8_s384.pth --ref_audio ./elon_musk/opt_vocal/vocal_slice_001.mp3_10.flac --target_text "This is a great country, I love it. Tesla will produce more cars" --target_language  英文 --ref_language 英文 --output_path ./tmp --ref_text ""
+## Example cmd: GPT_SoVITS/inference_cli.py --gpt_model ./debug/GPT_weights_v2/xxx-e15.ckpt --sovits_model ./debug/SoVITS_weights_v2/xxx_e8_s384.pth --ref_audio ./elon_musk/opt_vocal/vocal_slice_001.mp3_10.flac --target_text "This is a great country, I love it. Tesla will produce more cars" --target_language  英文 --ref_language 英文 --output_path ./tmp --ref_text ""
