@@ -23,9 +23,10 @@ def fix_gpu_numbers(inputs):
 
 
 p_train_GPT=None
-def open1Bb(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers,pretrained_s1):
+def open1Bb(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers,pretrained_s1, exp_root):
     print(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers,pretrained_s1)
     global p_train_GPT
+    # exp_root = cmd.exp_root
     if(p_train_GPT==None):
         with open("GPT_SoVITS/configs/s1longer.yaml"if version=="v1"else "GPT_SoVITS/configs/s1longer-v2.yaml")as f:
             data=f.read()
@@ -44,16 +45,19 @@ def open1Bb(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_
         data["train"]["if_save_every_weights"]=if_save_every_weights
         data["train"]["if_save_latest"]=if_save_latest
         data["train"]["if_dpo"]=if_dpo
-        data["train"]["half_weights_save_dir"]=GPT_weight_root[-int(version[-1])+2]
+        data["train"]["half_weights_save_dir"]=os.path.join(exp_root, GPT_weight_root[-int(version[-1])+2])
         data["train"]["exp_name"]=exp_name
         data["train_semantic_path"]="%s/6-name2semantic.tsv"%s1_dir
         data["train_phoneme_path"]="%s/2-name2text.txt"%s1_dir
         data["output_dir"]="%s/logs_s1"%s1_dir
         # data["version"]=version
 
+        if not os.path.isdir(data["train"]["half_weights_save_dir"]):
+            os.makedirs(data["train"]["half_weights_save_dir"])
+
         os.environ["_CUDA_VISIBLE_DEVICES"]=fix_gpu_numbers(gpu_numbers.replace("-",","))
         os.environ["hz"]="25hz"
-        tmp_config_path="%s/tmp_s1.yaml"%tmp
+        tmp_config_path="%s/tmp_s1.yaml"%exp_root
         with open(tmp_config_path, "w") as f:f.write(yaml.dump(data, default_flow_style=False))
         # cmd = '"%s" GPT_SoVITS/s1_train.py --config_file "%s" --train_semantic_path "%s/6-name2semantic.tsv" --train_phoneme_path "%s/2-name2text.txt" --output_dir "%s/logs_s1"'%(python_exec,tmp_config_path,s1_dir,s1_dir,s1_dir)
         cmd = '"%s" GPT_SoVITS/s1_train.py --config_file "%s" '%(python_exec,tmp_config_path)
@@ -68,7 +72,13 @@ def open1Bb(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_
 
 
 if __name__ == "__main__":
-    #  
+    import argparse
+  
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-e", "--exp-root", type=str, default="xxx", required=True,)
+    cmd = parser.parse_args()
+    print(cmd)
+  
     batch_size = 4
     total_epoch = 15
     exp_name = "xxx"
@@ -78,7 +88,7 @@ if __name__ == "__main__":
     save_every_epoch = 5
     gpu_numbers = "0-1"
     pretrained_s1 = "GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s1bert25hz-5kh-longer-epoch=12-step=369668.ckpt"
-
-    prs = open1Bb(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers,pretrained_s1)
+    exp_root = cmd.exp_root
+    prs = open1Bb(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers,pretrained_s1, exp_root)
     for _ in prs:
         pass

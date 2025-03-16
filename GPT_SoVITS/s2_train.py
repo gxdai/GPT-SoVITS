@@ -486,6 +486,7 @@ def train_and_evaluate(
                     "%s/logs_s2" % hps.data.exp_dir, "D_{}.pth".format(233333333333)
                 ),
             )
+        
         if rank == 0 and hps.train.if_save_every_weights == True:
             if hasattr(net_g, "module"):
                 ckpt = net_g.module.state_dict()

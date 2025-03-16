@@ -42,8 +42,9 @@ def fix_gpu_numbers(inputs):
         return inputs
 
 ps1abc=[]
-def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numbers1c,bert_pretrained_dir,ssl_pretrained_dir,pretrained_s2G_path):
+def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numbers1c,bert_pretrained_dir,ssl_pretrained_dir,pretrained_s2G_path, exp_root):
     global ps1abc
+    # exp_root = cmd.exp_root
     inp_text = my_utils.clean_path(inp_text)
     inp_wav_dir = my_utils.clean_path(inp_wav_dir)
     if check_for_existance([inp_text,inp_wav_dir], is_dataset_processing=True):
@@ -170,9 +171,8 @@ def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numb
 
 
 if __name__ == "__main__":
-    #         
-    inp_text = "output/asr_opt/denoise_opt.list"
-    inp_wav_dir = "output/slicer_opt"
+    import argparse
+
     exp_name = "xxx"
     gpu_numbers1a = "0-1-0-1"
     gpu_numbers1Ba = "0-1-0-1"
@@ -180,7 +180,13 @@ if __name__ == "__main__":
     bert_pretrained_dir = "GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large"
     ssl_pretrained_dir = "GPT_SoVITS/pretrained_models/chinese-hubert-base"
     pretrained_s2G_path = "GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth"
-    
-    processes = open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numbers1c,bert_pretrained_dir,ssl_pretrained_dir,pretrained_s2G_path)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-e", "--exp-root", type=str, required=True,)
+    cmd = parser.parse_args()
+    inp_text = os.path.join(cmd.exp_root, "opt_asr/opt_denoise.list")
+    inp_wav_dir = os.path.join(cmd.exp_root, "opt_denoise")
+    print(cmd)
+    processes = open1abc(inp_text, inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numbers1c,bert_pretrained_dir,ssl_pretrained_dir,pretrained_s2G_path, exp_root=cmd.exp_root)
     for _ in processes:
         pass

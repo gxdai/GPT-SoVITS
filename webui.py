@@ -231,6 +231,7 @@ def change_tts_inference(bert_path,cnhubert_base_path,gpu_number,gpt_path,sovits
         cmd = '"%s" GPT_SoVITS/inference_webui_fast.py "%s"'%(python_exec, language)
     else:
         cmd = '"%s" GPT_SoVITS/inference_webui.py "%s"'%(python_exec, language)
+    
     if(p_tts_inference==None):
         os.environ["gpt_path"]=gpt_path if "/" in gpt_path else "%s/%s"%(GPT_weight_root,gpt_path)
         os.environ["sovits_path"]=sovits_path if "/"in sovits_path else "%s/%s"%(SoVITS_weight_root,sovits_path)
@@ -240,6 +241,7 @@ def change_tts_inference(bert_path,cnhubert_base_path,gpu_number,gpt_path,sovits
         os.environ["is_half"]=str(is_half)
         os.environ["infer_ttswebui"]=str(webui_port_infer_tts)
         os.environ["is_share"]=str(is_share)
+
         yield i18n("TTS推理进程已开启"), {'__type__':'update','visible':False}, {'__type__':'update','visible':True}
         print(cmd)
         p_tts_inference = Popen(cmd, shell=True)

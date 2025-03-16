@@ -9,12 +9,18 @@ i18n = I18nAuto()
 
 def synthesize(GPT_model_path, SoVITS_model_path, ref_audio_path, ref_text_path, ref_language, target_text_path, target_language, output_path):
     # Read reference text
-    with open(ref_text_path, 'r', encoding='utf-8') as file:
-        ref_text = file.read()
-
+    if os.path.isfile(ref_text_path):
+        with open(ref_text_path, 'r', encoding='utf-8') as file:
+            ref_text = file.read()
+    else:
+        # This is direct text
+        ref_text = ref_text_path
     # Read target text
-    with open(target_text_path, 'r', encoding='utf-8') as file:
-        target_text = file.read()
+    if os.path.isfile(target_text_path):
+        with open(target_text_path, 'r', encoding='utf-8') as file:
+            target_text = file.read()
+    else:
+        target_text = target_text_path
 
     # Change model weights
     change_gpt_weights(gpt_path=GPT_model_path)
@@ -31,6 +37,8 @@ def synthesize(GPT_model_path, SoVITS_model_path, ref_audio_path, ref_text_path,
 
     if result_list:
         last_sampling_rate, last_audio_data = result_list[-1]
+        if not os.path.isdir(output_path):
+            os.makedirs(output_path, exist_ok=True)
         output_wav_path = os.path.join(output_path, "output.wav")
         sf.write(output_wav_path, last_audio_data, last_sampling_rate)
         print(f"Audio saved to {output_wav_path}")

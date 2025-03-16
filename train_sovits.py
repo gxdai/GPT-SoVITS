@@ -13,7 +13,7 @@ tmp = os.path.join(now_dir, "TEMP")
 
 
 p_train_SoVITS=None
-def open1Ba(batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers1Ba,pretrained_s2G,pretrained_s2D):
+def open1Ba(batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers1Ba,pretrained_s2G,pretrained_s2D, exp_root):
     global p_train_SoVITS
     if(p_train_SoVITS==None):
         with open("GPT_SoVITS/configs/s2.json")as f:
@@ -37,10 +37,15 @@ def open1Ba(batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_s
         data["train"]["gpu_numbers"]=gpu_numbers1Ba
         data["model"]["version"]=version
         data["data"]["exp_dir"]=data["s2_ckpt_dir"]=s2_dir
-        data["save_weight_dir"]=SoVITS_weight_root[-int(version[-1])+2]
+        data["save_weight_dir"]= os.path.join(exp_root, SoVITS_weight_root[-int(version[-1])+2])
         data["name"]=exp_name
         data["version"]=version
-        tmp_config_path="%s/tmp_s2.json"%tmp
+        print("save_dir: ", data["save_weight_dir"])
+
+        if not os.path.isdir(data["save_weight_dir"]):
+            os.makedirs(data["save_weight_dir"], exist_ok=True)
+
+        tmp_config_path="%s/tmp_s2.json"% exp_root
         with open(tmp_config_path,"w")as f:f.write(json.dumps(data))
 
         cmd = '"%s" GPT_SoVITS/s2_train.py --config "%s"'%(python_exec,tmp_config_path)
@@ -56,9 +61,16 @@ def open1Ba(batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_s
 
 if __name__ == "__main__":
     # 0-1 GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2D2333k.pth
+    import argparse
+  
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-e", "--exp-root", type=str, default="xxx", required=True,)
+    cmd = parser.parse_args()
+    print(cmd)
+
     batch_size = 4
     total_epoch = 8
-    exp_name = 'xxx'
+    exp_name = "xxx"
     text_low_lr_rate = 0.4
     if_save_latest = True
     if_save_every_weights = True
@@ -66,6 +78,7 @@ if __name__ == "__main__":
     gpu_numbers1Ba = "0-1"
     pretrained_s2G = "GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth"
     pretrained_s2D = "GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2D2333k.pth"
-    prs = open1Ba(batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers1Ba,pretrained_s2G,pretrained_s2D)
+    exp_root = cmd.exp_root
+    prs = open1Ba(batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers1Ba,pretrained_s2G,pretrained_s2D, exp_root)
     for _ in prs:
         pass
